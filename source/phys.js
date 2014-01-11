@@ -1,4 +1,20 @@
 
+/*
+
+TODO:
+
+	Move to using typed arrays for the particle properties
+
+	Allow user to "draw" fixed particles on the field
+		The particle classes would be created by the user on the page or from presets
+
+	Importing/exporting of settings
+		This could include the arrangement of "drawn" particles
+
+	Concurrency?
+
+*/
+
 // To keep the compiler from complaining
 
 /** @type {Object} */
@@ -62,7 +78,7 @@ Body.prototype = {
 	// Sets the body type
 	setType: function Body_setType(type) {
 		this.type = type;
-		this.radius = star.classes[type].radius;
+		this.radius = star.classes[type].diameter / 2;
 		this.mass = star.classes[type].mass;
 		this.threshold = star.classes[type].threshold;
 	}
@@ -180,7 +196,7 @@ window.star = {
 
 	drawCellCenterOfMass: false,
 
-	particleDrawSizeMultiplier: 0.75,
+	particleDrawSizeMultiplier: 0.8,
 
 		// Particle Class Data
 
@@ -188,56 +204,56 @@ window.star = {
 		{},
 		{
 			color: 'Black',
-			radius: 2,
-			mass: 10,
+			diameter: 3,
+			mass: 20,
 			threshold: 1000000,
 			count: 0
 		},
 		{
 			color: 'Purple',
-			radius: 3,
-			mass: 20,
+			diameter: 4,
+			mass: 30,
 			threshold: 3*1000000,
 			count: 0
 		},
 		{
 			color: 'Blue',
-			radius: 4,
-			mass: 30,
+			diameter: 5,
+			mass: 40,
 			threshold: 8*1000000,
 			count: 0
 		},
 		{
 			color: 'Green',
-			radius: 5,
-			mass: 40,
+			diameter: 6,
+			mass: 50,
 			threshold: 12*1000000,
 			count: 0
 		},
 		{
 			color: 'Yellow',
-			radius: 6,
-			mass: 50,
+			diameter: 7,
+			mass: 60,
 			threshold: 25*1000000,
 			count: 0
 		},
 		{
 			color: 'Orange',
-			radius: 7,
-			mass: 60,
+			diameter: 8,
+			mass: 70,
 			threshold: 36*1000000,
 			count: 0
 		},
 		{
 			color: 'Red',
-			radius: 8,
-			mass: 70,
+			diameter: 10,
+			mass: 80,
 			threshold: 49*1000000,
 			count: 0
 		},
 		{
 			color: 'Pink',
-			radius: 10,
+			diameter: 20,
 			mass: -10000
 		}
 	],
@@ -1196,9 +1212,9 @@ window.star = {
 
 					elem = $('#cp-class'+i+'-physicalDiameter');
 					elem[0].data = data;
-					elem.val(data.radius*2);
+					elem.val(data.diameter);
 					elem.change(function(e) {
-						e.target.data.radius = parseInt($(e.target).val(), 10)/2;
+						e.target.data.diameter = parseInt($(e.target).val(), 10);
 						star.updateParticles();
 					});
 
