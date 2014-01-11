@@ -1,0 +1,470 @@
+<html>
+	<head>
+		<!-- <script type="text/javascript" src="source/phys.js"></script> -->
+		<script type="text/javascript" src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+		<script type="text/javascript" src="phys.min.js"></script>
+		<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.3.0/pure-min.css">
+		<style>
+
+			#canvas {
+				margin: 10px;
+				border: 10px solid rgb(100,100,100);
+				position: absolute;
+				-webkit-box-shadow: 5px 5px 20px black;
+				-moz-box-shadow: 10px 10px 20px black;
+				float:left;
+				position:fixed;
+				top: 0;
+			}
+
+			body {
+				background-color: rgb(240,240,240);
+			}
+
+			.controlPanel {
+
+				padding: 8px;
+
+				background-color: #DDD;
+
+				border: 2px solid #555;
+				border-radius: 3;
+
+				margin-left: 12px;
+				margin-top: 12px;
+
+			}
+
+			.hidden {
+				display: none;
+			}
+
+			.header-button {
+				width: 100%;
+				font-weight: bold;
+			}
+
+			.class-count-div {
+				font-size: 10pt
+			}
+
+			h1 {
+				margin-left: 10px;
+			}
+
+		</style>
+	</head>
+	<body>
+
+		<div class="pure-g-r">
+			<div class="pure-u-1-5">
+
+				<h1>Bouncy Ball Hell</h1>
+
+				<div id="cp-main" class="controlPanel">
+					<button class="pure-button header-button" data-toggle="main_form">General</button>
+					<form class="pure-form pure-form-stacked" id="main_form">
+						<fieldset>
+
+							<button id="restart" type="button">Restart</button>
+
+							<button id="pause" type="button">Pause</button>
+
+							<p>Simulation time: <span id="simTime"></span> ms</p>
+
+							<p>Rendering time: <span id="drawTime"></span> ms</p>
+
+							<div class="pure-control-group">
+								<label for="cp-main-count">Particle Count</label>
+								<input id="cp-main-count" type="number" min="1" step="100">
+							</div>
+
+							<br>
+
+							<div class="class-count-div">
+								<span>Class 1 Count:  <span id="class1_count"></span></span>
+							</div>
+
+							<div class="class-count-div">
+								<span>Class 2 Count:  <span id="class2_count"></span></span>
+							</div>
+
+							<div class="class-count-div">
+								<span>Class 3 Count:  <span id="class3_count"></span></span>
+							</div>
+
+							<div class="class-count-div">
+								<span>Class 4 Count:  <span id="class4_count"></span></span>
+							</div>
+
+							<div class="class-count-div">
+								<span>Class 5 Count:  <span id="class5_count"></span></span>
+							</div>
+
+							<div class="class-count-div">
+								<span>Class 6 Count:  <span id="class6_count"></span></span>
+							</div>
+
+							<div class="class-count-div">
+								<span>Class 7 Count:  <span id="class7_count"></span></span>
+							</div>
+
+						</fieldset>
+					</form>
+				</div>
+
+				<div id="cp-physics" class="controlPanel">
+					<button class="pure-button header-button" data-toggle="physics_form">Physics</button>
+					<form class="pure-form pure-form-stacked" id="physics_form">
+						<fieldset>
+
+							<div class="pure-control-group">
+								<label for="cp-physics-gravity">Gravity Constant</label>
+								<input id="cp-physics-gravity" type="float">
+							</div>
+
+							<div class="pure-control-group">
+								<label for="cp-physics-particleBounce">Particle Bounciness</label>
+								<input id="cp-physics-particleBounce" type="float">
+							</div>
+
+							<div class="pure-control-group">
+								<label for="cp-physics-wallBounce">Wall Bounciness</label>
+								<input id="cp-physics-wallBounce" type="float">
+							</div>
+
+							<div class="pure-control-group">
+								<label for="cp-physics-wallFrict">Wall Friction</label>
+								<input id="cp-physics-wallFrict" type="float">
+							</div>
+
+						</fieldset>
+					</form>
+				</div>
+
+				<div id="cp-gridSize" class="controlPanel">
+					<button class="pure-button header-button" data-toggle="gridSize_form">Grid Sizing</button>
+					<form class="pure-form pure-form-stacked hidden" id="gridSize_form">
+						<fieldset>
+
+							<h4>Automatic Size</h4>
+
+							<label for="enableAutomaticGridSizing" class="pure-checkbox">
+								<input id="enableAutomaticGridSizing" type="checkbox"> Enable automatic grid sizing
+							</label>
+
+							<h4>Manual Size</h4>
+
+							<div class="pure-control-group">
+								<label for="cp-gridSize-columns">Columns</label>
+								<input id="cp-gridSize-columns" type="number" min="2">
+							</div>
+
+							<div class="pure-control-group">
+								<label for="cp-gridSize-rows">Rows</label>
+								<input id="cp-gridSize-rows" type="number" min="2">
+							</div>
+
+						</fieldset>
+					</form>
+				</div>
+
+				<div id="cp-rendering" class="controlPanel">
+					<button class="pure-button header-button" data-toggle="rendering_form">Rendering Options</button>
+					<form class="pure-form pure-form-stacked hidden" id="rendering_form">
+						<fieldset>
+
+							<div class="pure-control-group">
+								<label for="cp-rendering-particleDrawSizeMultiplier">Particle Draw Size Multiplier</label>
+								<input id="cp-rendering-particleDrawSizeMultiplier" type="float">
+							</div>
+
+							<h4>Grid</h4>
+
+							<label for="cp-drawGrid"  class="pure-checkbox">
+								<input id="cp-drawGrid" type="checkbox">Draw grid
+							</label>
+
+							<label for="cp-drawCellMass"  class="pure-checkbox">
+								<input id="cp-drawCellMass" type="checkbox">Draw the actual mass in each cell
+							</label>
+
+							<label for="cp-drawCellCenterOfMass"  class="pure-checkbox">
+								<input id="cp-drawCellCenterOfMass" type="checkbox">Draw center of mass in each cell
+							</label>
+
+						</fieldset>
+					</form>
+				</div>
+
+				<div id="cp-class1" class="controlPanel">
+					<button class="pure-button header-button" data-toggle="class1_form">Particle Class 1 Options</button>
+					<form class="pure-form pure-form-stacked hidden" id="class1_form">
+						<fieldset>
+
+							<div class="pure-control-group">
+								<label for="cp-class1-color">Color</label>
+								<select id="cp-class1-color">
+									<option>Red</option>
+									<option>Orange</option>
+									<option>Yellow</option>
+									<option>Green</option>
+									<option>Blue</option>
+									<option>Purple</option>
+									<option>Black</option>
+								</select>
+							</div>
+
+							<div class="pure-control-group">
+								<label for="cp-class1-physicalDiameter">Physical Diameter</label>
+								<input id="cp-class1-physicalDiameter" type="number" min="1">
+							</div>
+
+							<div class="pure-control-group">
+								<label for="cp-class1-mass">Mass</label>
+								<input id="cp-class1-mass" type="number" min="1">
+							</div>
+
+							<div class="pure-control-group">
+								<label for="cp-class1-threshold">Fusion Threshold</label>
+								<input id="cp-class1-threshold" type="number" min="1">
+							</div>
+
+						</fieldset>
+					</form>
+				</div>
+
+				<div id="cp-class2" class="controlPanel">
+					<button class="pure-button header-button" data-toggle="class2_form">Particle Class 2 Options</button>
+					<form class="pure-form pure-form-stacked hidden" id="class2_form">
+						<fieldset>
+
+							<div class="pure-control-group">
+								<label for="cp-class2-color">Color</label>
+								<select id="cp-class2-color">
+									<option>Red</option>
+									<option>Orange</option>
+									<option>Yellow</option>
+									<option>Green</option>
+									<option>Blue</option>
+									<option>Purple</option>
+									<option>Black</option>
+								</select>
+							</div>
+
+							<div class="pure-control-group">
+								<label for="cp-class2-physicalDiameter">Physical Diameter</label>
+								<input id="cp-class2-physicalDiameter" type="number" min="1">
+							</div>
+
+							<div class="pure-control-group">
+								<label for="cp-class2-mass">Mass</label>
+								<input id="cp-class2-mass" type="number" min="1">
+							</div>
+
+							<div class="pure-control-group">
+								<label for="cp-class2-threshold">Fusion Threshold</label>
+								<input id="cp-class2-threshold" type="number" min="1">
+							</div>
+
+						</fieldset>
+					</form>
+				</div>
+
+				<div id="cp-class3" class="controlPanel">
+					<button class="pure-button header-button" data-toggle="class3_form">Particle Class 3 Options</button>
+					<form class="pure-form pure-form-stacked hidden" id="class3_form">
+						<fieldset>
+
+							<div class="pure-control-group">
+								<label for="cp-class3-color">Color</label>
+								<select id="cp-class3-color">
+									<option>Red</option>
+									<option>Orange</option>
+									<option>Yellow</option>
+									<option>Green</option>
+									<option>Blue</option>
+									<option>Purple</option>
+									<option>Black</option>
+								</select>
+							</div>
+
+							<div class="pure-control-group">
+								<label for="cp-class3-physicalDiameter">Physical Diameter</label>
+								<input id="cp-class3-physicalDiameter" type="number" min="1">
+							</div>
+
+							<div class="pure-control-group">
+								<label for="cp-class3-mass">Mass</label>
+								<input id="cp-class3-mass" type="number" min="1">
+							</div>
+
+							<div class="pure-control-group">
+								<label for="cp-class3-threshold">Fusion Threshold</label>
+								<input id="cp-class3-threshold" type="number" min="1">
+							</div>
+
+						</fieldset>
+					</form>
+				</div>
+
+				<div id="cp-class4" class="controlPanel">
+					<button class="pure-button header-button" data-toggle="class4_form">Particle Class 4 Options</button>
+					<form class="pure-form pure-form-stacked hidden" id="class4_form">
+						<fieldset>
+
+							<div class="pure-control-group">
+								<label for="cp-class4-color">Color</label>
+								<select id="cp-class4-color">
+									<option>Red</option>
+									<option>Orange</option>
+									<option>Yellow</option>
+									<option>Green</option>
+									<option>Blue</option>
+									<option>Purple</option>
+									<option>Black</option>
+								</select>
+							</div>
+
+							<div class="pure-control-group">
+								<label for="cp-class4-physicalDiameter">Physical Diameter</label>
+								<input id="cp-class4-physicalDiameter" type="number" min="1">
+							</div>
+
+							<div class="pure-control-group">
+								<label for="cp-class4-mass">Mass</label>
+								<input id="cp-class4-mass" type="number" min="1">
+							</div>
+
+							<div class="pure-control-group">
+								<label for="cp-class4-threshold">Fusion Threshold</label>
+								<input id="cp-class4-threshold" type="number" min="1">
+							</div>
+
+						</fieldset>
+					</form>
+				</div>
+
+				<div id="cp-class5" class="controlPanel">
+					<button class="pure-button header-button" data-toggle="class5_form">Particle Class 5 Options</button>
+					<form class="pure-form pure-form-stacked hidden" id="class5_form">
+						<fieldset>
+
+							<div class="pure-control-group">
+								<label for="cp-class5-color">Color</label>
+								<select id="cp-class5-color">
+									<option>Red</option>
+									<option>Orange</option>
+									<option>Yellow</option>
+									<option>Green</option>
+									<option>Blue</option>
+									<option>Purple</option>
+									<option>Black</option>
+								</select>
+							</div>
+
+							<div class="pure-control-group">
+								<label for="cp-class5-physicalDiameter">Physical Diameter</label>
+								<input id="cp-class5-physicalDiameter" type="number" min="1">
+							</div>
+
+							<div class="pure-control-group">
+								<label for="cp-class5-mass">Mass</label>
+								<input id="cp-class5-mass" type="number" min="1">
+							</div>
+
+							<div class="pure-control-group">
+								<label for="cp-class5-threshold">Fusion Threshold</label>
+								<input id="cp-class5-threshold" type="number" min="1">
+							</div>
+
+						</fieldset>
+					</form>
+				</div>
+
+				<div id="cp-class6" class="controlPanel">
+					<button class="pure-button header-button" data-toggle="class6_form">Particle Class 6 Options</button>
+					<form class="pure-form pure-form-stacked hidden" id="class6_form">
+						<fieldset>
+
+							<div class="pure-control-group">
+								<label for="cp-class6-color">Color</label>
+								<select id="cp-class6-color">
+									<option>Red</option>
+									<option>Orange</option>
+									<option>Yellow</option>
+									<option>Green</option>
+									<option>Blue</option>
+									<option>Purple</option>
+									<option>Black</option>
+								</select>
+							</div>
+
+							<div class="pure-control-group">
+								<label for="cp-class6-physicalDiameter">Physical Diameter</label>
+								<input id="cp-class6-physicalDiameter" type="number" min="1">
+							</div>
+
+							<div class="pure-control-group">
+								<label for="cp-class6-mass">Mass</label>
+								<input id="cp-class6-mass" type="number" min="1">
+							</div>
+
+							<div class="pure-control-group">
+								<label for="cp-class6-threshold">Fusion Threshold</label>
+								<input id="cp-class6-threshold" type="number" min="1">
+							</div>
+
+						</fieldset>
+					</form>
+				</div>
+
+				<div id="cp-class7" class="controlPanel">
+					<button class="pure-button header-button" data-toggle="class7_form">Particle Class 7 Options</button>
+					<form class="pure-form pure-form-stacked hidden" id="class7_form">
+						<fieldset>
+
+							<div class="pure-control-group">
+								<label for="cp-class7-color">Color</label>
+								<select id="cp-class7-color">
+									<option>Red</option>
+									<option>Orange</option>
+									<option>Yellow</option>
+									<option>Green</option>
+									<option>Blue</option>
+									<option>Purple</option>
+									<option>Black</option>
+								</select>
+							</div>
+
+							<div class="pure-control-group">
+								<label for="cp-class7-physicalDiameter">Physical Diameter</label>
+								<input id="cp-class7-physicalDiameter" type="number" min="1">
+							</div>
+
+							<div class="pure-control-group">
+								<label for="cp-class7-mass">Mass</label>
+								<input id="cp-class7-mass" type="number" min="1">
+							</div>
+
+							<div class="pure-control-group">
+								<label for="cp-class7-threshold">Fusion Threshold</label>
+								<input id="cp-class7-threshold" type="number" min="1">
+							</div>
+
+						</fieldset>
+					</form>
+				</div>
+
+			</div>
+
+			<div class="pure-u-4-5" id="canvasContainer">
+				<canvas id="canvas">Update your browser.</canvas>
+			</div>
+
+		</div>
+
+
+	</body>
+	<script type="text/javascript">star.init()</script>
+</html>
