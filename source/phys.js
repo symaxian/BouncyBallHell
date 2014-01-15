@@ -4,6 +4,17 @@
 TODO:
 
 	Move to using typed arrays for the particle properties
+		type		int8
+		x, y		float32
+		vx, vy		float32
+		ax, ay		float32
+		fx, fy		float32
+		radius		int8 or float32?
+		mass		int?
+		threshold	int?				May not need, comes from type
+		color							Comes from type
+		cell		int8				Index of cell
+		canMove		int8
 
 	Allow user to "draw" fixed particles on the field
 		The particle classes would be created by the user on the page or from presets
@@ -12,6 +23,8 @@ TODO:
 		This could include the arrangement of "drawn" particles
 
 	Concurrency?
+		Copying the data between threads would be very cumbersome
+		Would have to use the Transferable abilities of ArrayBuffers
 
 */
 
@@ -148,11 +161,6 @@ window.star = {
 	MAX_DISPLAY_HEIGHT: 1080,
 	//#replace star.MAX_DISPLAY_HEIGHT 1080
 
-	// The amount of time the physics simulation is allowed to account for
-	// Lower values will make it progress slower but more accurately
-	MAX_SIMULATION_STEP_TIME: 30,
-	//#replace star.MAX_SIMULATION_STEP_TIME 30
-
 	INIT_GRID_CELL_SIZE: 12000,
 	//#replace star.INIT_GRID_CELL_SIZE 12000
 
@@ -160,6 +168,12 @@ window.star = {
 	//#replace star.LEFT_CLICK_BODY_CLASS 8
 
 		// Main
+
+	running: false,
+
+	flipNextCollisionCheckDirection: false,
+
+	bodies: [],
 
 	particleCount: 3000,
 
@@ -171,12 +185,6 @@ window.star = {
 
 	enableAutomaticGridSizing: true,
 
-	running: false,
-
-	flipNextCollisionCheckDirection: false,
-
-	bodies: [],
-
 		// Physics
 
 	gravity: 0.0025,
@@ -187,6 +195,12 @@ window.star = {
 	wallFrict: 0.8,
 
 	particleBounce: 0.7,
+
+	limitSimulationStepTime: true,
+
+	// The amount of time the physics simulation is allowed to account for
+	// Lower values will make it progress slower but more accurately
+	maxSimulationStepTime: 30,
 
 		// Rendering
 
@@ -332,8 +346,8 @@ window.star = {
 		if(star.running) {
 
 			// Cap the simulation to keep it from being too inaccurate
-			if(elapsed > star.MAX_SIMULATION_STEP_TIME) {
-				elapsed = star.MAX_SIMULATION_STEP_TIME;
+			if(elapsed > star.maxSimulationStepTime) {
+				elapsed = star.maxSimulationStepTime;
 			}
 
 			// Step the simulation
@@ -979,10 +993,11 @@ window.star = {
 	moveConstrainsAll: function star_moveConstrainsAll() {
 
 		var cells = star.cells,
-			i, cell,
-			x, y,
-			rows = star.rowCount,
-			columns = star.columnCount;
+			i;
+			// cell,
+			// x, y,
+			// rows = star.rowCount,
+			// columns = star.columnCount;
 
 		// Constrain the bodies to the field and sort them into the grid
 		star.constrainAndSortBodies();
@@ -1077,8 +1092,6 @@ window.star = {
 
 		init: function star_ui_init() {
 
-			this.cpMain = document.getElementById('cp-main');
-
 			var headerButtons = document.getElementsByClassName('header-button');
 			for( var i=0; i<headerButtons.length; i++ ) {
 				headerButtons[i].onclick = function(e) {
@@ -1094,8 +1107,7 @@ window.star = {
 
 			// Main
 
-			var restart = $('#restart');
-			restart.click(star.restart);
+			$('#restart').click(star.restart);
 
 			var pause = $('#pause');
 			pause.click(function() {
@@ -1109,31 +1121,34 @@ window.star = {
 				}
 			});
 
-			$('#cp-main-count').val(star.particleCount);
-			$('#cp-main-count').change(function(e) {
+			$('#particleCount').val(star.particleCount).change(function(e) {
 				star.particleCount = parseInt($(e.target).val(), 10);
 			});
 
 			// Physics
 
-			$('#cp-physics-gravity').val(star.gravity);
-			$('#cp-physics-gravity').change(function(e) {
+			$('#gravity').val(star.gravity).change(function(e) {
 				star.gravity = parseFloat($(e.target).val());
 			});
 
-			$('#cp-physics-particleBounce').val(star.particleBounce);
-			$('#cp-physics-particleBounce').change(function(e) {
+			$('#particleBounce').val(star.particleBounce).change(function(e) {
 				star.particleBounce = parseFloat($(e.target).val());
 			});
 
-			$('#cp-physics-wallBounce').val(star.wallBounce);
-			$('#cp-physics-wallBounce').change(function(e) {
+			$('#wallBounce').val(star.wallBounce).change(function(e) {
 				star.wallBounce = parseFloat($(e.target).val());
 			});
 
-			$('#cp-physics-wallFrict').val(star.wallFrict);
-			$('#cp-physics-wallFrict').change(function(e) {
+			$('#wallFrict').val(star.wallFrict).change(function(e) {
 				star.wallFrict = parseFloat($(e.target).val());
+			});
+
+			$('#limitSimSpeed').attr('checked', star.limitSimulationStepTime).change(function(e) {
+				star.limitSimulationStepTime = e.target.checked;
+			});
+
+			$('#simSpeedLimit').val(star.maxSimulationStepTime).change(function(e) {
+				star.maxSimulationStepTime = parseInt($(e.target).val(), 10);
 			});
 
 			// Grid
@@ -1168,23 +1183,23 @@ window.star = {
 
 			// Rendering
 
-			$('#cp-drawGrid')[0].checked = star.drawGrid;
-			$('#cp-drawGrid').change(function(e) {
+			$('#drawGrid')[0].checked = star.drawGrid;
+			$('#drawGrid').change(function(e) {
 				star.drawGrid = e.target.checked;
 			});
 
-			$('#cp-drawCellMass')[0].checked = star.drawCellMass;
-			$('#cp-drawCellMass').change(function(e) {
+			$('#drawCellMass')[0].checked = star.drawCellMass;
+			$('#drawCellMass').change(function(e) {
 				star.drawCellMass = e.target.checked;
 			});
 
-			$('#cp-drawCellCenterOfMass')[0].checked = star.drawCellCenterOfMass;
-			$('#cp-drawCellCenterOfMass').change(function(e) {
+			$('#drawCellCenterOfMass')[0].checked = star.drawCellCenterOfMass;
+			$('#drawCellCenterOfMass').change(function(e) {
 				star.drawCellCenterOfMass = e.target.checked;
 			});
 
-			$('#cp-rendering-particleDrawSizeMultiplier').val(star.particleDrawSizeMultiplier);
-			$('#cp-rendering-particleDrawSizeMultiplier').change(function(e) {
+			$('#particleDrawSizeMultiplier').val(star.particleDrawSizeMultiplier);
+			$('#particleDrawSizeMultiplier').change(function(e) {
 				star.particleDrawSizeMultiplier = parseFloat($(e.target).val());
 			});
 
@@ -1195,22 +1210,21 @@ window.star = {
 
 			// Particle Classes
 			var data, elem;
-			for(i=0;i<star.classes.length-1;i++) {
+			for(i=1;i<star.classes.length-1;i++) {
 
 				data = star.classes[i];
 
 				elem = $('#cp-class'+i);
 				if(elem.length) {
 
-					elem = $('#cp-class'+i+'-color');
+					elem = $('#class'+i+'-color');
 					elem[0].data = data;
 					elem.val(data.color);
 					elem.change(function(e) {
 						e.target.data.color = $(e.target).val();
-						// star.updateParticles();
 					});
 
-					elem = $('#cp-class'+i+'-physicalDiameter');
+					elem = $('#class'+i+'-physicalDiameter');
 					elem[0].data = data;
 					elem.val(data.diameter);
 					elem.change(function(e) {
@@ -1218,7 +1232,7 @@ window.star = {
 						star.updateParticles();
 					});
 
-					elem = $('#cp-class'+i+'-mass');
+					elem = $('#class'+i+'-mass');
 					elem[0].data = data;
 					elem.val(data.mass);
 					elem.change(function(e) {
@@ -1226,7 +1240,7 @@ window.star = {
 						star.updateParticles();
 					});
 
-					elem = $('#cp-class'+i+'-threshold');
+					elem = $('#class'+i+'-threshold');
 					elem[0].data = data;
 					elem.val(data.threshold);
 					elem.change(function(e) {

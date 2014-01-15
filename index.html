@@ -1,7 +1,7 @@
 <html>
 	<head>
-		<!-- <script type="text/javascript" src="source/phys.js"></script> -->
 		<script type="text/javascript" src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+		<!-- <script type="text/javascript" src="source/phys.js"></script> -->
 		<script type="text/javascript" src="phys.min.js"></script>
 		<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.3.0/pure-min.css">
 		<style>
@@ -61,7 +61,7 @@
 
 				<h1>Bouncy Ball Hell</h1>
 
-				<div id="cp-main" class="controlPanel">
+				<div class="controlPanel">
 					<button class="pure-button header-button" data-toggle="main_form">General</button>
 					<form class="pure-form pure-form-stacked" id="main_form">
 						<fieldset>
@@ -75,8 +75,8 @@
 							<p>Rendering time: <span id="drawTime"></span> ms</p>
 
 							<div class="pure-control-group">
-								<label for="cp-main-count">Particle Count</label>
-								<input id="cp-main-count" type="number" min="1" step="100">
+								<label for="particleCount">Particle Count</label>
+								<input id="particleCount" type="number" min="1" step="100">
 							</div>
 
 							<br>
@@ -113,36 +113,47 @@
 					</form>
 				</div>
 
-				<div id="cp-physics" class="controlPanel">
+				<div class="controlPanel">
 					<button class="pure-button header-button" data-toggle="physics_form">Physics</button>
 					<form class="pure-form pure-form-stacked" id="physics_form">
 						<fieldset>
 
 							<div class="pure-control-group">
-								<label for="cp-physics-gravity">Gravity Constant</label>
-								<input id="cp-physics-gravity" type="float">
+								<label for="gravity">Gravity Constant</label>
+								<input id="gravity" type="float">
 							</div>
 
 							<div class="pure-control-group">
-								<label for="cp-physics-particleBounce">Particle Bounciness</label>
-								<input id="cp-physics-particleBounce" type="float">
+								<label for="particleBounce">Particle Bounciness</label>
+								<input id="particleBounce" type="float">
 							</div>
 
 							<div class="pure-control-group">
-								<label for="cp-physics-wallBounce">Wall Bounciness</label>
-								<input id="cp-physics-wallBounce" type="float">
+								<label for="wallBounce">Wall Bounciness</label>
+								<input id="wallBounce" type="float">
 							</div>
 
 							<div class="pure-control-group">
-								<label for="cp-physics-wallFrict">Wall Friction</label>
-								<input id="cp-physics-wallFrict" type="float">
+								<label for="wallFrict">Wall Friction</label>
+								<input id="wallFrict" type="float">
+							</div>
+
+							<h4>Speed Limiting</h4>
+
+							<label for="limitSimSpeed" class="pure-checkbox">
+								<input id="limitSimSpeed" type="checkbox"> Limit simulation speed, improves accuracy
+							</label>
+
+							<div class="pure-control-group">
+								<label for="simSpeedLimit">Speed limit, in milliseconds</label>
+								<input id="simSpeedLimit" type="number" min="1">
 							</div>
 
 						</fieldset>
 					</form>
 				</div>
 
-				<div id="cp-gridSize" class="controlPanel">
+				<div class="controlPanel">
 					<button class="pure-button header-button" data-toggle="gridSize_form">Grid Sizing</button>
 					<form class="pure-form pure-form-stacked hidden" id="gridSize_form">
 						<fieldset>
@@ -169,28 +180,28 @@
 					</form>
 				</div>
 
-				<div id="cp-rendering" class="controlPanel">
+				<div class="controlPanel">
 					<button class="pure-button header-button" data-toggle="rendering_form">Rendering Options</button>
 					<form class="pure-form pure-form-stacked hidden" id="rendering_form">
 						<fieldset>
 
 							<div class="pure-control-group">
-								<label for="cp-rendering-particleDrawSizeMultiplier">Particle Draw Size Multiplier</label>
-								<input id="cp-rendering-particleDrawSizeMultiplier" type="float">
+								<label for="particleDrawSizeMultiplier">Particle Draw Size Multiplier</label>
+								<input id="particleDrawSizeMultiplier" type="float">
 							</div>
 
 							<h4>Grid</h4>
 
-							<label for="cp-drawGrid"  class="pure-checkbox">
-								<input id="cp-drawGrid" type="checkbox">Draw grid
+							<label for="drawGrid"  class="pure-checkbox">
+								<input id="drawGrid" type="checkbox">Draw grid
 							</label>
 
-							<label for="cp-drawCellMass"  class="pure-checkbox">
-								<input id="cp-drawCellMass" type="checkbox">Draw the actual mass in each cell
+							<label for="drawCellMass"  class="pure-checkbox">
+								<input id="drawCellMass" type="checkbox">Draw the actual mass in each cell
 							</label>
 
-							<label for="cp-drawCellCenterOfMass"  class="pure-checkbox">
-								<input id="cp-drawCellCenterOfMass" type="checkbox">Draw center of mass in each cell
+							<label for="drawCellCenterOfMass"  class="pure-checkbox">
+								<input id="drawCellCenterOfMass" type="checkbox">Draw center of mass in each cell
 							</label>
 
 						</fieldset>
@@ -203,8 +214,8 @@
 						<fieldset>
 
 							<div class="pure-control-group">
-								<label for="cp-class1-color">Color</label>
-								<select id="cp-class1-color">
+								<label for="class1-color">Color</label>
+								<select id="class1-color">
 									<option>Red</option>
 									<option>Orange</option>
 									<option>Yellow</option>
@@ -216,18 +227,18 @@
 							</div>
 
 							<div class="pure-control-group">
-								<label for="cp-class1-physicalDiameter">Physical Diameter</label>
-								<input id="cp-class1-physicalDiameter" type="number" min="1">
+								<label for="class1-physicalDiameter">Physical Diameter</label>
+								<input id="class1-physicalDiameter" type="number" min="1">
 							</div>
 
 							<div class="pure-control-group">
-								<label for="cp-class1-mass">Mass</label>
-								<input id="cp-class1-mass" type="number" min="1">
+								<label for="class1-mass">Mass</label>
+								<input id="class1-mass" type="number" min="1">
 							</div>
 
 							<div class="pure-control-group">
-								<label for="cp-class1-threshold">Fusion Threshold</label>
-								<input id="cp-class1-threshold" type="number" min="1">
+								<label for="class1-threshold">Fusion Threshold</label>
+								<input id="class1-threshold" type="number" min="1">
 							</div>
 
 						</fieldset>
@@ -240,8 +251,8 @@
 						<fieldset>
 
 							<div class="pure-control-group">
-								<label for="cp-class2-color">Color</label>
-								<select id="cp-class2-color">
+								<label for="class2-color">Color</label>
+								<select id="class2-color">
 									<option>Red</option>
 									<option>Orange</option>
 									<option>Yellow</option>
@@ -253,18 +264,18 @@
 							</div>
 
 							<div class="pure-control-group">
-								<label for="cp-class2-physicalDiameter">Physical Diameter</label>
-								<input id="cp-class2-physicalDiameter" type="number" min="1">
+								<label for="class2-physicalDiameter">Physical Diameter</label>
+								<input id="class2-physicalDiameter" type="number" min="1">
 							</div>
 
 							<div class="pure-control-group">
-								<label for="cp-class2-mass">Mass</label>
-								<input id="cp-class2-mass" type="number" min="1">
+								<label for="class2-mass">Mass</label>
+								<input id="class2-mass" type="number" min="1">
 							</div>
 
 							<div class="pure-control-group">
-								<label for="cp-class2-threshold">Fusion Threshold</label>
-								<input id="cp-class2-threshold" type="number" min="1">
+								<label for="class2-threshold">Fusion Threshold</label>
+								<input id="class2-threshold" type="number" min="1">
 							</div>
 
 						</fieldset>
@@ -277,8 +288,8 @@
 						<fieldset>
 
 							<div class="pure-control-group">
-								<label for="cp-class3-color">Color</label>
-								<select id="cp-class3-color">
+								<label for="class3-color">Color</label>
+								<select id="class3-color">
 									<option>Red</option>
 									<option>Orange</option>
 									<option>Yellow</option>
@@ -290,18 +301,18 @@
 							</div>
 
 							<div class="pure-control-group">
-								<label for="cp-class3-physicalDiameter">Physical Diameter</label>
-								<input id="cp-class3-physicalDiameter" type="number" min="1">
+								<label for="class3-physicalDiameter">Physical Diameter</label>
+								<input id="class3-physicalDiameter" type="number" min="1">
 							</div>
 
 							<div class="pure-control-group">
-								<label for="cp-class3-mass">Mass</label>
-								<input id="cp-class3-mass" type="number" min="1">
+								<label for="class3-mass">Mass</label>
+								<input id="class3-mass" type="number" min="1">
 							</div>
 
 							<div class="pure-control-group">
-								<label for="cp-class3-threshold">Fusion Threshold</label>
-								<input id="cp-class3-threshold" type="number" min="1">
+								<label for="class3-threshold">Fusion Threshold</label>
+								<input id="class3-threshold" type="number" min="1">
 							</div>
 
 						</fieldset>
@@ -314,8 +325,8 @@
 						<fieldset>
 
 							<div class="pure-control-group">
-								<label for="cp-class4-color">Color</label>
-								<select id="cp-class4-color">
+								<label for="class4-color">Color</label>
+								<select id="class4-color">
 									<option>Red</option>
 									<option>Orange</option>
 									<option>Yellow</option>
@@ -327,18 +338,18 @@
 							</div>
 
 							<div class="pure-control-group">
-								<label for="cp-class4-physicalDiameter">Physical Diameter</label>
-								<input id="cp-class4-physicalDiameter" type="number" min="1">
+								<label for="class4-physicalDiameter">Physical Diameter</label>
+								<input id="class4-physicalDiameter" type="number" min="1">
 							</div>
 
 							<div class="pure-control-group">
-								<label for="cp-class4-mass">Mass</label>
-								<input id="cp-class4-mass" type="number" min="1">
+								<label for="class4-mass">Mass</label>
+								<input id="class4-mass" type="number" min="1">
 							</div>
 
 							<div class="pure-control-group">
-								<label for="cp-class4-threshold">Fusion Threshold</label>
-								<input id="cp-class4-threshold" type="number" min="1">
+								<label for="class4-threshold">Fusion Threshold</label>
+								<input id="class4-threshold" type="number" min="1">
 							</div>
 
 						</fieldset>
@@ -351,8 +362,8 @@
 						<fieldset>
 
 							<div class="pure-control-group">
-								<label for="cp-class5-color">Color</label>
-								<select id="cp-class5-color">
+								<label for="class5-color">Color</label>
+								<select id="class5-color">
 									<option>Red</option>
 									<option>Orange</option>
 									<option>Yellow</option>
@@ -364,18 +375,18 @@
 							</div>
 
 							<div class="pure-control-group">
-								<label for="cp-class5-physicalDiameter">Physical Diameter</label>
-								<input id="cp-class5-physicalDiameter" type="number" min="1">
+								<label for="class5-physicalDiameter">Physical Diameter</label>
+								<input id="class5-physicalDiameter" type="number" min="1">
 							</div>
 
 							<div class="pure-control-group">
-								<label for="cp-class5-mass">Mass</label>
-								<input id="cp-class5-mass" type="number" min="1">
+								<label for="class5-mass">Mass</label>
+								<input id="class5-mass" type="number" min="1">
 							</div>
 
 							<div class="pure-control-group">
-								<label for="cp-class5-threshold">Fusion Threshold</label>
-								<input id="cp-class5-threshold" type="number" min="1">
+								<label for="class5-threshold">Fusion Threshold</label>
+								<input id="class5-threshold" type="number" min="1">
 							</div>
 
 						</fieldset>
@@ -388,8 +399,8 @@
 						<fieldset>
 
 							<div class="pure-control-group">
-								<label for="cp-class6-color">Color</label>
-								<select id="cp-class6-color">
+								<label for="class6-color">Color</label>
+								<select id="class6-color">
 									<option>Red</option>
 									<option>Orange</option>
 									<option>Yellow</option>
@@ -401,18 +412,18 @@
 							</div>
 
 							<div class="pure-control-group">
-								<label for="cp-class6-physicalDiameter">Physical Diameter</label>
-								<input id="cp-class6-physicalDiameter" type="number" min="1">
+								<label for="class6-physicalDiameter">Physical Diameter</label>
+								<input id="class6-physicalDiameter" type="number" min="1">
 							</div>
 
 							<div class="pure-control-group">
-								<label for="cp-class6-mass">Mass</label>
-								<input id="cp-class6-mass" type="number" min="1">
+								<label for="class6-mass">Mass</label>
+								<input id="class6-mass" type="number" min="1">
 							</div>
 
 							<div class="pure-control-group">
-								<label for="cp-class6-threshold">Fusion Threshold</label>
-								<input id="cp-class6-threshold" type="number" min="1">
+								<label for="class6-threshold">Fusion Threshold</label>
+								<input id="class6-threshold" type="number" min="1">
 							</div>
 
 						</fieldset>
@@ -425,8 +436,8 @@
 						<fieldset>
 
 							<div class="pure-control-group">
-								<label for="cp-class7-color">Color</label>
-								<select id="cp-class7-color">
+								<label for="class7-color">Color</label>
+								<select id="class7-color">
 									<option>Red</option>
 									<option>Orange</option>
 									<option>Yellow</option>
@@ -438,18 +449,18 @@
 							</div>
 
 							<div class="pure-control-group">
-								<label for="cp-class7-physicalDiameter">Physical Diameter</label>
-								<input id="cp-class7-physicalDiameter" type="number" min="1">
+								<label for="class7-physicalDiameter">Physical Diameter</label>
+								<input id="class7-physicalDiameter" type="number" min="1">
 							</div>
 
 							<div class="pure-control-group">
-								<label for="cp-class7-mass">Mass</label>
-								<input id="cp-class7-mass" type="number" min="1">
+								<label for="class7-mass">Mass</label>
+								<input id="class7-mass" type="number" min="1">
 							</div>
 
 							<div class="pure-control-group">
-								<label for="cp-class7-threshold">Fusion Threshold</label>
-								<input id="cp-class7-threshold" type="number" min="1">
+								<label for="class7-threshold">Fusion Threshold</label>
+								<input id="class7-threshold" type="number" min="1">
 							</div>
 
 						</fieldset>
@@ -459,7 +470,7 @@
 			</div>
 
 			<div class="pure-u-4-5" id="canvasContainer">
-				<canvas id="canvas">Update your browser.</canvas>
+				<canvas id="canvas">Pleas update your browser to utilize the HTML5 canvas API.</canvas>
 			</div>
 
 		</div>
